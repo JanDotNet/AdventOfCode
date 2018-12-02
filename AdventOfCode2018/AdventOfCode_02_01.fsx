@@ -1,23 +1,8 @@
-﻿#r "../packages/FSharp.Data/lib/netstandard2.0/FSharp.Data.dll"
-
-open System
-open System.IO
-open FSharp.Data
-open System.Collections.Generic
+﻿open System.IO
 
 let root = __SOURCE_DIRECTORY__
 let inputFile = root + @"\data\adventofcode_02.txt"
 let input = File.ReadAllLines(inputFile) |> Seq.toList;
-
-let input2 = [
-        "abcdef";
-        "bababc";
-        "abbcde";
-        "abcccd";
-        "aabcdd";
-        "abcdee";
-        "ababab";
-    ]
 
 let addTuple (a, b) (c, d) = (a + c, b + d)
 

@@ -1,6 +1,4 @@
-﻿#r "../packages/FSharp.Data/lib/netstandard2.0/FSharp.Data.dll"
-
-open System
+﻿open System
 open System.IO
 
 let root = __SOURCE_DIRECTORY__

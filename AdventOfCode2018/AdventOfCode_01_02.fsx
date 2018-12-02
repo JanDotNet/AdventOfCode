@@ -1,15 +1,8 @@
-﻿#r "../packages/FSharp.Data/lib/netstandard2.0/FSharp.Data.dll"
-
-open System
-open System.IO
-open FSharp.Data
-open System.Collections.Generic
+﻿open System.IO
 
 let root = __SOURCE_DIRECTORY__
 let inputFile = root + @"\data\adventofcode_01.txt"
-let input2 = File.ReadAllLines(inputFile);
-
-let input = [1;-2;3;1]
+let input = File.ReadAllLines(inputFile);
 
 type State =
     | FinalState of int
