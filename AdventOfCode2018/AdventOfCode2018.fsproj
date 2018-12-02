@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="data\adventofcode_02.txt" />
+    <Content Include="data\adventofcode_01.txt" />
+    <None Include="AdventOfCode_01_02.fsx" />
+    <None Include="AdventOfCode_02_01.fsx" />
+    <None Include="AdventOfCode_02_02.fsx" />
+  </ItemGroup>
+
+</Project>
