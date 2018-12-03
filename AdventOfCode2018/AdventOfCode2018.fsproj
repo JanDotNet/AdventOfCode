@@ -13,6 +13,7 @@
     <None Include="AdventOfCode_02_01.fsx" />
     <None Include="AdventOfCode_02_02.fsx" />
     <None Include="AdventOfCode_03_01.fsx" />
+    <None Include="AdventOfCode_03_02.fsx" />
   </ItemGroup>
 
 </Project>
