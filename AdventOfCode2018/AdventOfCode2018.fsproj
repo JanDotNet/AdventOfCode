@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="data\adventofcode_03.txt" />
     <Content Include="data\adventofcode_02.txt" />
     <Content Include="data\adventofcode_01.txt" />
     <None Include="AdventOfCode_01_02.fsx" />
     <None Include="AdventOfCode_02_01.fsx" />
     <None Include="AdventOfCode_02_02.fsx" />
+    <None Include="AdventOfCode_03_01.fsx" />
   </ItemGroup>
 
 </Project>
