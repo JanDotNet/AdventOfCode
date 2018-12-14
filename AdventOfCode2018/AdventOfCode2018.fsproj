@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="GameOfLife.fsx" />
+    <Compile Include="FsTask.fs" />
+    <None Include="FsTaskTest.fsx" />
+    <Content Include="data\adventofcode_07.txt" />
+    <Content Include="data\adventofcode_06.txt" />
+    <Content Include="data\adventofcode_05.txt" />
+    <Content Include="data\adventofcode_04.txt" />
     <Content Include="data\adventofcode_03.txt" />
     <Content Include="data\adventofcode_02.txt" />
     <Content Include="data\adventofcode_01.txt" />
@@ -14,6 +21,13 @@
     <None Include="AdventOfCode_02_02.fsx" />
     <None Include="AdventOfCode_03_01.fsx" />
     <None Include="AdventOfCode_03_02.fsx" />
+    <None Include="AdventOfCode_04_01.fsx" />
+    <None Include="AdventOfCode_04_02.fsx" />
+    <None Include="AdventOfCode_05_01.fsx" />
+    <None Include="AdventOfCode_06_01.fsx" />
+    <None Include="AdventOfCode_06_02.fsx" />
+    <None Include="AdventOfCode_07_01.fsx" />
+    <None Include="AdventOfCode_07_02.fsx" />
   </ItemGroup>
 
 </Project>
