@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Test.fsx" />
+    <Content Include="Data\Day01.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Day02.txt" />
+    <Compile Include="Day01_1.fsx" />
+    <Compile Include="Day01_2.fsx" />
+    <Compile Include="Day02_1.fsx" />
+    <Compile Include="Day02_2.fsx" />
+  </ItemGroup>
+
+</Project>
