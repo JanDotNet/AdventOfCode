@@ -4,12 +4,9 @@ let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day07.txt")
 
 let input = File.ReadAllText(file).Split(',') |> Array.map int
 
-let inputp1e1 = [|3;15;3;16;1002;16;10;16;1;16;15;15;4;15;99;0;0|]
-let inputp1e2 = [|3;23;3;24;1002;24;10;24;1002;23;-1;23;101;5;23;23;1;24;23;23;4;23;99;0;0|]
-let inputp2e1 = [|3;26;1001;26;-4;26;3;27;1002;27;2;27;1;27;26;27;4;27;1001;28;-1;28;1005;28;6;99;0;0;5|]
-
 (*Helper*)
-module Seq = let rec cycle xs = seq { yield! xs; yield! cycle xs }
+module Seq = 
+    let rec cycle xs = seq { yield! xs; yield! cycle xs }
 
 (* Domain *)
 type ParameterMode =
@@ -79,69 +76,60 @@ type InstructionObject =
             | EqualsInstruction      (a, b, c) -> Equals      (getValue a, getValue b, setValue c)
             | FinishedInstruction              -> Finished
 
-//type ExecutionContext = {Position:int; Input:int list; Output: int list}
+type ComputeResult =
+    | OutputSignal of int
+    | FinishedSignal
 
-type ExecutionContext2 = {Position:int; PhaseSettings: int seq; UsePhaseSetting: bool; Output:int}
-    with 
-        member this.NextInput() =
-                match this.UsePhaseSetting with
-                | true  -> this.PhaseSettings |> Seq.head
-                | false -> this.Output
+type Computer(buffer : int array, phase: int, name: char) =
+     let mutable initial = true
+     member val Buffer = buffer with get
+     member val Name = name with get
+     member val Phase = phase with get
+     member val Position = 0 with get, set
+     member val Output = 0 with get, set
+     
+     member this.Compute (signal: int) =
+         let initialList = (if initial then [this.Phase; signal ] else [ signal ])
+         initial <- false
+         let rec compute' (input': int list) =        
+             let instructionDescriptor = this.Buffer.[this.Position] |> InstructionDescriptor.parse
+             let instructionObject = instructionDescriptor |> InstructionObject.Create buffer this.Position
+             match instructionObject with
+                 | Multiply    (x, y, setter) -> setter (x * y); this.Position <- this.Position + 4; compute' input'
+                 | Add         (x, y, setter) -> setter (x + y); this.Position <- this.Position + 4; compute' input'
+                 | Input       (action)       -> action(input'.Head); this.Position <- this.Position + 2; compute' input'.Tail
+                 | Output      (action)       -> this.Output <- action(); this.Position <- this.Position + 2; OutputSignal(this.Output)
+                 | JumpIfTrue  (a, b)         -> this.Position <- (if a <> 0 then b else this.Position + 3); compute' input'
+                 | JumpIfFalse (a, b)         -> this.Position <- (if a = 0 then b else this.Position + 3); compute' input'
+                 | LessThen    (a, b, setter) -> setter(if a < b then 1 else 0); this.Position <- this.Position + 4; compute' input'
+                 | Equals      (a, b, setter) -> setter(if a = b then 1 else 0); this.Position <- this.Position + 4; compute' input'
+                 | Finished                   -> FinishedSignal         
+         compute' initialList
 
-(* Procoessing Logic *)
-//let compute (buffer:int array) (ctx:ExecutionContext) =
-//    let rec compute' (buffer:int array) (ctx:ExecutionContext) =        
-//        let instructionDescriptor = buffer.[ctx.Position] |> InstructionDescriptor.parse
-//        let instructionObject = instructionDescriptor |> InstructionObject.Create buffer ctx.Position
-//        let compBuf = compute' buffer
-//        match instructionObject with
-//            | Multiply    (x, y, setter) -> setter (x * y); compBuf {ctx with Position = ctx.Position + 4}
-//            | Add         (x, y, setter) -> setter (x + y); compBuf {ctx with Position = ctx.Position + 4}
-//            | Input       (action)       -> action(ctx.Input.Head); compBuf {ctx with Position = ctx.Position + 2; Input = ctx.Input.Tail}
-//            | Output      (action)       -> compBuf {ctx with Position = ctx.Position + 2; Output = action() :: ctx.Output}
-//            | JumpIfTrue  (a, b)         -> compBuf {ctx with Position = if a <> 0 then b else ctx.Position + 3}
-//            | JumpIfFalse (a, b)         -> compBuf {ctx with Position = if a = 0 then b else ctx.Position + 3}
-//            | LessThen    (a, b, setter) -> setter(if a < b then 1 else 0); compBuf {ctx with Position = ctx.Position + 4}
-//            | Equals      (a, b, setter) -> setter(if a = b then 1 else 0); compBuf {ctx with Position = ctx.Position + 4}
-//            | Finished                   -> ctx
-//    compute' buffer ctx
+let rec processAmplifierPart2 (computers: Computer list)=
+    (* initial phase *)
+    let computation = seq {
+        let mutable singalInput = 0
+        let mutable finalOutput = 0
+        for computer in computers |> Seq.cycle do
+            printfn "Computer %c with phase %i" computer.Name computer.Phase
+            match (computer.Compute singalInput) with
+            | OutputSignal output -> 
+                singalInput <- output;
+                finalOutput <- if computer.Name = 'E' then computer.Output else finalOutput
+            | FinishedSignal -> yield finalOutput }
 
-let computePart2 (buffer:int array) (ctx:ExecutionContext2) =
-    let rec compute' (buffer:int array) (ctx:ExecutionContext2) =        
-        let instructionDescriptor = buffer.[ctx.Position] |> InstructionDescriptor.parse
-        let instructionObject = instructionDescriptor |> InstructionObject.Create buffer ctx.Position
-        let compBuf = compute' buffer
-        match instructionObject with
-            | Multiply    (x, y, setter) -> setter (x * y); 
-                                            compBuf {ctx with Position = ctx.Position + 4}
-            | Add         (x, y, setter) -> setter (x + y);
-                                            compBuf {ctx with Position = ctx.Position + 4}
-            | Input       (action)       -> action(ctx.NextInput());
-                                            compBuf {ctx with Position = ctx.Position + 2; UsePhaseSetting = false}
-            | Output      (action)       -> compBuf {ctx with Position = ctx.Position + 2; Output = action(); UsePhaseSetting = true; PhaseSettings = ctx.PhaseSettings |> Seq.skip 1}
-            | JumpIfTrue  (a, b)         -> compBuf {ctx with Position = if a <> 0 then b else ctx.Position + 3}
-            | JumpIfFalse (a, b)         -> compBuf {ctx with Position = if a = 0 then b else ctx.Position + 3}
-            | LessThen    (a, b, setter) -> setter(if a < b then 1 else 0); 
-                                            compBuf {ctx with Position = ctx.Position + 4}
-            | Equals      (a, b, setter) -> setter(if a = b then 1 else 0); 
-                                            compBuf {ctx with Position = ctx.Position + 4}
-            | Finished                   -> ctx
-    compute' buffer ctx    
+    computation |> Seq.head
 
-//let rec processAmplifierPart1 (buffer:int array) phaseSequence =
-//    let rec processAmplifier' remPhases out = 
-//        let bufferClone = Array.copy buffer
-//        match remPhases with
-//        | h::t -> 
-//            let ctx = compute bufferClone {Position = 0; Input = [h; out]; Output = []};
-//            processAmplifier' t (ctx.Output |> List.exactlyOne)
-//        | []   -> out
-//    processAmplifier' phaseSequence 0
-
-let rec processAmplifierPart2 (buffer:int array) phaseSequence =
-    let bufferClone = Array.copy buffer
-    let ctx = computePart2 bufferClone { Position = 0; PhaseSettings = phaseSequence; UsePhaseSetting = true; Output = 0 }
-    ctx
+let rec processAmplifierPart1 (computers: Computer list) =
+    let mutable singalInput = 0
+    for computer in computers do
+        printf "Computer %c with phase %i" computer.Name computer.Phase 
+        match (computer.Compute singalInput) with
+        | OutputSignal output -> singalInput <- output;
+        | FinishedSignal -> failwith("Shout not happen")
+    singalInput
+    
 
 let rec distribute e = function
 | [] -> [[e]]
@@ -151,16 +139,11 @@ let rec permute = function
 | [] -> [[]]
 | e::xs -> List.collect (distribute e) (permute xs)
 
-//[0..4] |> permute |> List.map (processAmplifierPart1 input) |> List.max
+let createComputers input phase =
+    phase |> List.mapi (fun i p -> Computer(Array.copy input, p, (i+65) |> char))
 
-//[5..9] |> permute |> List.map (processAmplifierPart2 inputp2e1) |> List.max
+// Part 1
+//[0;1;2;3;4] |> permute |> List.map (createComputers input) |> List.map processAmplifierPart1 |> List.max
 
-[9;8;7;6;5] |> (processAmplifierPart2 inputp2e1)
-
-
-
-let txt1 = "ehTsii  s aemssga"
-let txt2 = "This is second message"
-
-printfn "%i" (txt1 |> Seq.length)
-
+// Part 2
+//[5;6;7;8;9] |> permute |> List.map (createComputers input) |> List.map processAmplifierPart2 |> List.max
