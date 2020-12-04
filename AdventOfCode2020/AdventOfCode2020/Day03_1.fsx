@@ -2,7 +2,7 @@
 open System
 open System.Text.RegularExpressions
 
-let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day03d.txt")
+let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day03.txt")
 
 module Seq = let rec cycle xs = seq { yield! xs; yield! cycle xs }
 
