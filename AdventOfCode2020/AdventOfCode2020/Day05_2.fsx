@@ -18,8 +18,9 @@ let decodeColCode = decode 'R' 'L' (0, 0)
 let result = File.ReadAllLines(file)
              |> Seq.map splitCodes             
              |> Seq.map (fun (row, col) -> decodeRowCode row, decodeColCode col)            
-             |> Seq.map (fun (row, col) ->  row * 8 + col)
+             |> Seq.map (fun (row, col) -> row * 8 + col)
              |> Seq.sort
              |> Seq.pairwise
              |> Seq.filter (fun (prev, cur) -> prev <> (cur - 1) && cur <> (prev - 1))
-             |> Seq.iter (fun (prev, cur) -> printfn "%i %i" prev cur)
+             |> Seq.map (fun (prev, cur) -> (prev + cur) / 2)
+             |> Seq.exactlyOne
