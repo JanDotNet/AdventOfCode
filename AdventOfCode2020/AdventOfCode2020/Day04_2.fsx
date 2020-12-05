@@ -4,11 +4,11 @@ open System.Text.RegularExpressions
 
 let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day04.txt")
 
-let folder (agg, lst) = function
+let preprocessInput (agg, lst) = function
                       | "" -> ( "", agg :: lst)
                       | item -> ( String.Join(" ", [agg; item]), lst)
 
-let lineToKeyValueMap (line:string) = line.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
+let lineToMap (line:string) = line.Split([|' '|], StringSplitOptions.RemoveEmptyEntries) 
                                       |> Seq.map (fun i -> i.Split(':'))
                                       |> Seq.map (fun s -> s.[0], s.[1])
                                       |> Map.ofSeq
@@ -17,10 +17,8 @@ let required = ["byr";"iyr";"eyr";"hgt";"hcl";"ecl";"pid"] //;"cid"
 
 let isBetween min max value = value <= max && value >= min
 let isHeightValid (value:string) = 
-                    if value.EndsWith("cm")  
-                    then value.Substring(0, value.Length-2) |> int |> isBetween 150 193
-                    elif value.EndsWith("in")
-                    then value.Substring(0, value.Length-2) |> int |> isBetween 59 76
+                    if value.EndsWith("cm") then value.Substring(0, value.Length-2) |> int |> isBetween 150 193
+                    elif value.EndsWith("in") then value.Substring(0, value.Length-2) |> int |> isBetween 59 76
                     else false
 let isEyeColorValid v = ["amb"; "blu"; "brn"; "gry"; "grn"; "hzl"; "oth"] |> List.contains v
 let isHairColorValid v = Regex.IsMatch(v, "^#[0-9a-f]{6}$")
@@ -37,9 +35,9 @@ let isValid = function
               | _ -> true
 
 let result = File.ReadAllLines(file) 
-              |> Seq.fold folder ("", []) 
+              |> Seq.fold preprocessInput ("", []) 
               |> snd
-              |> Seq.map lineToKeyValueMap
+              |> Seq.map lineToMap
               |> Seq.filter (fun m -> required |> List.forall m.ContainsKey)
               |> Seq.map (fun m -> m |> Map.toList)
               |> Seq.filter (fun l -> l |> Seq.forall isValid)
