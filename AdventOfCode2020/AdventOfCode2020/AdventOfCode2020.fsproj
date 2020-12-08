@@ -15,6 +15,7 @@
     <Content Include="Data\Day05.txt" />
     <Content Include="Data\Day06.txt" />
     <Content Include="Data\Day07.txt" />
+    <Content Include="Data\Day08.txt" />
     <None Include="Test.fsx" />
     <Compile Include="Day01_1.fsx" />
     <Compile Include="Day01_2.fsx" />
@@ -29,6 +30,8 @@
     <None Include="Day06_1.fsx" />
     <None Include="Day06_2.fsx" />
     <None Include="Day07_1.fsx" />
+    <None Include="Day07_2.fsx" />
+    <None Include="Day08_2.fsx" />
   </ItemGroup>
 
 </Project>
