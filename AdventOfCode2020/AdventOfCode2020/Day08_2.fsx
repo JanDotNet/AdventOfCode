@@ -1,5 +1,4 @@
 ﻿open System.IO
-open System
 
 let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day08.txt")
 
@@ -48,4 +47,6 @@ let result = [ 0 .. upperIdx]
              |> List.map (tryFix program)
              |> List.map run
              |> List.filter Option.isSome
+
+
 
