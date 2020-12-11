@@ -8,8 +8,8 @@ let countAdjustedOnes (lst, agg) = function
     | 3 -> (agg :: lst, 0)
     | _ -> failwith("invalid case")
 
-let calulateVariations num = 
-        [|0;1;2;4;7|].[num-1]
+let getPossibleVariations num =  
+    [|0;1;2;4;7|].[num-1]
 
 let result = (0 :: numbers)
                 |> List.sort 
@@ -18,7 +18,7 @@ let result = (0 :: numbers)
                 |> List.fold countAdjustedOnes ([], 0)
                 |> (fun v -> (snd v) :: (fst v))
                 |> List.map (fun x -> x + 1)
-                |> List.map calulateVariations
+                |> List.map getPossibleVariations
                 |> List.filter (fun x -> x > 0)
                 |> List.map bigint
                 |> List.reduce (*)
