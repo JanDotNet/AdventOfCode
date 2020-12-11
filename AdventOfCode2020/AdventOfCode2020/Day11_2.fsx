@@ -26,14 +26,14 @@ let nextState locs =
         
     let getAdjacentStates (pos:Pos) =
         seq {
-          yield pos |> findNextState (fun p -> { p with X = X + 1})
-          yield pos |> findNextState (fun p -> { p with X = x - 1})
-          yield pos |> findNextState (fun p -> { p with Y = y + 1})
-          yield pos |> findNextState (fun p -> { p with Y = y - 1})
-          yield pos |> findNextState (fun p -> { X = X + 1; Y = Y + 1})
-          yield pos |> findNextState (fun p -> { X = X + 1; Y = Y - 1})
-          yield pos |> findNextState (fun p -> { X = X - 1; Y = Y + 1})
-          yield pos |> findNextState (fun p -> { X = X - 1; Y = Y - 1})
+          yield pos |> findNextState (fun p -> { p with X = p.X + 1})
+          yield pos |> findNextState (fun p -> { p with X = p.X - 1})
+          yield pos |> findNextState (fun p -> { p with Y = p.Y + 1})
+          yield pos |> findNextState (fun p -> { p with Y = p.Y - 1})
+          yield pos |> findNextState (fun p -> { X = p.X + 1; Y = p.Y + 1})
+          yield pos |> findNextState (fun p -> { X = p.X + 1; Y = p.Y - 1})
+          yield pos |> findNextState (fun p -> { X = p.X - 1; Y = p.Y + 1})
+          yield pos |> findNextState (fun p -> { X = p.X - 1; Y = p.Y - 1})
         } |> Seq.filter Option.isSome |> Seq.map Option.get            
 
     let hasAnyOccupied p = 
