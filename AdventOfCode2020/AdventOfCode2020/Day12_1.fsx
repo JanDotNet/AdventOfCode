@@ -4,8 +4,8 @@ let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day12.txt")
 let input = File.ReadAllLines(file) |> Array.toList
 
 (* Types *)
-type State = { Dir:char; N:int; E:int; S:int; W:int } with 
-  static member Initial = { Dir = 'E'; N = 0; E = 0; S = 0; W = 0}
+type State = { Dir:char; ShipX: int; ShipY: int } with 
+  static member Initial = { Dir = 'E'; ShipX = 0; ShipY = 0}
 
 (* Parsing *)
 let parseLine (line:string) = (line |> Seq.head, line.Substring(1) |> int)
@@ -19,10 +19,10 @@ let run instructions =
       turns |> List.find (fun (s, _) -> s = d) |> snd
 
     let rec processInstruction state = function
-      | ('N', num) -> { state with N = state.N + num }
-      | ('E', num) -> { state with E = state.E + num }
-      | ('S', num) -> { state with S = state.S + num }
-      | ('W', num) -> { state with W = state.W + num }
+      | ('N', num) -> { state with ShipY = state.ShipY - num }
+      | ('E', num) -> { state with ShipX = state.ShipX + num  }
+      | ('S', num) -> { state with ShipY = state.ShipY + num }
+      | ('W', num) -> { state with ShipX = state.ShipX - num }
       | ('L',  90) 
       | ('R', 270) -> { state with Dir = state.Dir |> apply turnLeft }
       | ('R',  90) 
@@ -34,7 +34,7 @@ let run instructions =
 
     instructions |> List.fold processInstruction State.Initial
 
-let getDistance (s:State) = abs (s.N - s.S) + abs (s.W - s.E)
+let getDistance (s:State) = abs (s.ShipX) + abs (s.ShipY)
 
 let result = input |> List.map parseLine |> run |> getDistance
     
