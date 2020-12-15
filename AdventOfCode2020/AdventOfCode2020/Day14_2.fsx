@@ -11,9 +11,7 @@ let padLeft n c (s:string) =
 let rec decToBin dec =
   match dec with
   | 0 | 1 -> string dec
-  | _ ->
-      let bit = string (dec % 2)
-      (decToBin (dec / 2)) + bit
+  | _ -> (decToBin (dec / 2)) + string (dec % 2)      
 
 let rec binToDec dec bin =
   match bin with
