@@ -27,9 +27,7 @@ let applyMask mask value =
     let masked = (value |> Seq.zip mask) |> Seq.map (fun (m, v) -> if m <> '0' then m else v) |> Seq.toList
     let numOfFloatingBits = masked |> Seq.filter (fun x -> x = 'X') |> Seq.length
     let floatingVariations = generatFloatings numOfFloatingBits |> Seq.toList
-    let folder (res, f:char list) = function
-                                    | 'X' -> (f.Head :: res, f.Tail)
-                                    | x   -> (x :: res, f)
+    let folder (res, f:char list) i = if i = 'X' then (f.Head :: res, f.Tail) else (i :: res, f)
     floatingVariations |> List.map (fun float -> masked |> List.fold folder ([], float) |> fst |> List.rev)
 
 let run (mask, pos, (value:int)) =
@@ -53,8 +51,5 @@ let result = lines
               |> parseLines 
               |> List.map run 
               |> List.collect id
-              |> List.rev
-              |> Map.ofList
-              |> Map.toList
-              |> List.map snd
-              |> List.sum
+              |> List.distinctBy fst
+              |> List.sumBy snd
