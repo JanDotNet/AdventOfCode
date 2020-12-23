@@ -18,7 +18,7 @@ let parse input =
         s |> string |> (Int64.TryParse >> snd)
 
       let isOp op = 
-        ['+'; '-'; '*'] |> List.contains op
+        ['+'; '*'] |> List.contains op
 
       let addToken token =
         match stack with
@@ -38,7 +38,6 @@ let parse input =
 let rec eval tokens =
   let calc lv rv = function
     | '+' -> lv + rv
-    | '-' -> lv - rv
     | '*' -> lv * rv
     | _ -> failwith "invalid operator"
 
