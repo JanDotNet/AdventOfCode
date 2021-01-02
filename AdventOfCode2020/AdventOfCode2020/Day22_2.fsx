@@ -8,10 +8,9 @@ let getDeck playerNo i = i |> List.skipWhile (fun l -> l <> (sprintf "Player %i:
                            |> List.skip 1 
                            |> List.takeWhile (fun l -> l <> "") 
                            |> List.map int
-                           
+
 let p1 = input |> getDeck 1
 let p2 = input |> getDeck 2
-let mutable counter = 1
 
 let getFinalDeck deck1 deck2 =  
   let rec getFinalDeck' d1 d2 processed level step =
