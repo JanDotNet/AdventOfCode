@@ -4,9 +4,10 @@ open System.Text.RegularExpressions
 
 let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day02.txt")
 
-type Entry = { Pos1:int; Pos2:int; Char:char; Password:string } with
+type Entry = { Pos1:int; Pos2:int; Char:char; Password:string }
 
-    static member parse (line:string) =
+module Entry =
+    let parse (line:string) =
         let pattern = "(?<p1>\d+)-(?<p2>\d+)\s(?<char>[a-z]):\s(?<pw>[a-z]+)"
         let m = Regex.Match(line, pattern)
         match m.Success with
@@ -16,7 +17,7 @@ type Entry = { Pos1:int; Pos2:int; Char:char; Password:string } with
                          Char = m.Groups.["char"].Value |> char }
         | _ -> None
 
-    static member validate (entry:Entry) =
+    let validate (entry:Entry) =
         let getCharAtPos pos = if entry.Password.Length >= pos 
                                then entry.Password.[pos-1]
                                else ' '
@@ -24,12 +25,9 @@ type Entry = { Pos1:int; Pos2:int; Char:char; Password:string } with
         let pos2 = getCharAtPos entry.Pos2
         (entry.Char = pos1) <> (entry.Char = pos2)
 
-module Seq = 
-    let filterSomeUnbox list = list |> Seq.filter Option.isSome |> Seq.map Option.get
-
 let result = File.ReadAllLines(file)
             |> Seq.map Entry.parse
-            |> Seq.filterSomeUnbox
+            |> Seq.choose id
             |> Seq.filter Entry.validate
             |> Seq.length
     
