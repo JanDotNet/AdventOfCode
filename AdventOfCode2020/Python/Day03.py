@@ -22,16 +22,11 @@ def solve_part1(items):
     return count
 
 def solve_part2(items):
-    count = (0,0,0,0,0)
+    steps = [(1, 1), (1, 3), (1, 5), (1, 7), (2, 0.5)]
+    count = [0] * len(steps)
     for rowidx, row in enumerate(input):
-        count = (
-            count[0] + 1 if istree(row, rowidx, 1, 1) else count[0],
-            count[1] + 1 if istree(row, rowidx, 1, 3) else count[1],
-            count[2] + 1 if istree(row, rowidx, 1, 5) else count[2],
-            count[3] + 1 if istree(row, rowidx, 1, 7) else count[3],
-            count[4] + 1 if istree(row, rowidx, 2, 0.5) else count[4],
-        )
-        # count = count + 1 if element == '#' else count
+        for idx, (rowstep, colstep) in enumerate(steps):
+            count[idx] = count[idx] + 1 if istree(row, rowidx, rowstep, colstep) else count[idx]
     return count[0] * count[1] * count[2] *  count[3] * count[4] 
 
 print(f"Part 1: {solve_part1(input)}")
