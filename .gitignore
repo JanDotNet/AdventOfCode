@@ -26,3 +26,5 @@ aspnetdb_log.ldf
 *~
 \#*\#
 **/.vs/*
+**/.venv/*
+**/.vscode/*
