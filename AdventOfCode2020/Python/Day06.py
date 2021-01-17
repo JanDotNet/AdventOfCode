@@ -5,19 +5,23 @@ with open("Data\Day06.txt") as file:
     block = file.read().split('\n\n')    
     input = list(map(lambda x: x.split('\n'), block))
 
-def count(agg, initial, data):
+def solve_part1(data):
     count = 0
     for answers in data:
-        s1 = map(lambda x: set(x), answers)
-        s2 = ft.reduce(agg, s1, initial)
-        count += len(s2)
-    return count
+        unique = set()
+        for person_answer in answers:
+            unique = unique | set(person_answer)
+        count += len(unique) 
+    return count    
 
-def solve_part1(data):
-    return count(lambda a, b: a | b, set(), data)
-    
 def solve_part2(data):
-    return count(lambda a, b: a & b, set(s.ascii_lowercase), data)
+    count = 0
+    for answers in data:
+        unique = set(s.ascii_lowercase)
+        for person_answer in answers:
+            unique = unique & set(person_answer)
+        count += len(unique) 
+    return count
 
 print(f"Part 1: {solve_part1(input)}")
 print(f"Part 2: {solve_part2(input)}")
