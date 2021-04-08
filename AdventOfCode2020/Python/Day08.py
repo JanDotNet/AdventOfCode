@@ -33,9 +33,10 @@ def solve_part2():
             'acc': 'acc' }
 
     for i in range(1, len(data)):
-        cpy = data.copy()
-        cpy[i] = (map[cpy[i][0]], cpy[i][1])
-        acc, fin = run(cpy)
+        data[i] = (map[data[i][0]], data[i][1])
+        acc, fin = run(data)
+        data[i] = (map[data[i][0]], data[i][1])
+
         if fin == 'finished':
             return acc
 

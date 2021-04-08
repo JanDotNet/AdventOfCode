@@ -15,10 +15,15 @@ def parse(line):
     for sep in separators:
         line = line.replace(sep, ";")
     
-    splt = [x for x in re.split(";", line) if x != None]
-    
+    splt = [x for x in re.split(";", line) if x != '']
+   
     bagName = splt[0]
-    containedBags = [(int(cntName[0]), cntName[1]) for cntName in bag.split(' ', 1) for bag in splt[1:]]
+    containedBags = []
+    for bag in splt[1:]:
+        cntName = bag.split(' ', 1)
+        cnt = int(cntName[0])
+        name = cntName[1]
+        containedBags.append((cnt, name))
     return (bagName, containedBags)
 
 data = list(map(parse, input))
@@ -43,7 +48,6 @@ def solve2():
     while len(stack) > 0:
         (cnt, bagName) = stack.pop()
         bag = next(filter(lambda entry: entry[0] == bagName, data))
-        # bag = [entry for entry in data if entry[0] == bagName][0]
         containedBags = [(c * cnt, name) for c, name in bag[1]]
         stack.extend(containedBags)
         count += cnt
