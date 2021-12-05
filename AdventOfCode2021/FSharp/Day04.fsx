@@ -61,7 +61,7 @@ let parseNumbers (puzzleInput:string list) =
     let drawNumbersStr = puzzleInput |> List.head
     drawNumbersStr.Split(',') |> Array.toList |> List.map int
 
-let folder ((boardList:Board list), currentBorad:Board) line =
+let boardFolder ((boardList:Board list), currentBorad:Board) line =
     match line with
     | "" -> (currentBorad :: boardList, Board.Empty)
     | _  -> let maxRow = ((currentBorad |> Board.getSize) |> fst)
@@ -72,8 +72,8 @@ let folder ((boardList:Board list), currentBorad:Board) line =
             (boardList, {Positions = currentBorad.Positions @ positionsRow })
 
 let drawings = input |> parseNumbers
-let firstboards, lastBoard = input |> List.skip 2 |> List.fold folder ([], Board.Empty)
-let boards = (lastBoard :: firstboards) |> List.rev
+let firstBoards, lastBoard = input |> List.skip 2 |> List.fold boardFolder ([], Board.Empty)
+let boards = (lastBoard :: firstBoards) |> List.rev
 
 let rec solve1 (ds:int list) (bs: Board list) =
     let d = ds |> List.head
