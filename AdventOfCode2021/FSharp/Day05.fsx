@@ -19,9 +19,9 @@ let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day05.txt")
 let input = File.ReadAllLines(file) |> Array.toList
 
 type Line = { Start:(int*int); End:(int*int); Points:(int*int) list } with
-    static member create sp ep =
-        let (x1, y1) = sp
-        let (x2, y2) = ep
+    static member create p1 p2 =
+        let (x1, y1) = p1
+        let (x2, y2) = p2
         let incrementor a b = if a = b then (fun p -> p+0)
                               elif a < b then (fun p -> p+1)
                               else (fun p -> p-1)
@@ -31,11 +31,11 @@ type Line = { Start:(int*int); End:(int*int); Points:(int*int) list } with
             let x, y = point
             let points' = point :: points
             let point' = (incX x, incY y)
-            if point = ep 
+            if point = p2 
             then points' 
             else generatePoints points' point'
 
-        { Start = sp; End = ep; Points = generatePoints [] sp }
+        { Start = p1; End = p2; Points = generatePoints [] p1 }
 
     static member isHorizontal line = (line.Start |> snd) = (line.End |> snd)
     static member isVertical line = (line.Start |> fst) = (line.End |> fst)
@@ -67,19 +67,18 @@ let parse (lines:string list) =
             let splitted = line.Split([|" -> "|], StringSplitOptions.RemoveEmptyEntries)
             let leftSplitted = splitted.[0].Split(',')
             let rightSplitted = splitted.[1].Split(',')
-            let left = (leftSplitted.[0] |> int, leftSplitted.[1] |> int)
-            let right = (rightSplitted.[0] |> int, rightSplitted.[1] |> int)
-            yield Line.create left right 
+            let p1 = (leftSplitted.[0] |> int, leftSplitted.[1] |> int)
+            let p2 = (rightSplitted.[0] |> int, rightSplitted.[1] |> int)
+            yield Line.create p1 p2 
             }
     generator |> Seq.toList
 
 let allLines = input |> parse
 let horizontalAndVerticalLines = allLines |> List.filter (fun l -> l |> Line.isHorizontal || l |> Line.isVertical)
 
-let solve lines = 
-    let board = Board.Empty
-    let finalBoard = board |> Board.applyLines lines
-    finalBoard.Positions |> Map.toSeq |> Seq.map snd |> Seq.filter (fun x -> x > 1) |> Seq.length
+let solve lines =  
+    let board = Board.Empty |> Board.applyLines lines
+    board.Positions |> Map.toSeq |> Seq.map snd |> Seq.filter (fun x -> x > 1) |> Seq.length
 
 printfn "Part1: %i" (solve horizontalAndVerticalLines)
 printfn "Part2: %i" (solve allLines)
