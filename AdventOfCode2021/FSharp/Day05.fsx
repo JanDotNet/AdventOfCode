@@ -18,8 +18,6 @@ let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day05.txt")
 
 let input = File.ReadAllLines(file) |> Array.toList
 
-type Position = { Pos:(int*int); Value:int }
-
 type Line = { Start:(int*int); End:(int*int); Points:(int*int) list } with
     static member create sp ep =
         let (x1, y1) = sp
@@ -42,7 +40,7 @@ type Line = { Start:(int*int); End:(int*int); Points:(int*int) list } with
     static member isHorizontal line = (line.Start |> snd) = (line.End |> snd)
     static member isVertical line = (line.Start |> fst) = (line.End |> fst)
             
-
+            
 type Board = {Positions: Map<int*int,int>} with
     
     static member Empty = {Positions = Map.empty}
