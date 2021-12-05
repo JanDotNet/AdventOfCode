@@ -40,23 +40,16 @@ type Line = { Start:(int*int); End:(int*int); Points:(int*int) list } with
     static member isHorizontal line = (line.Start |> snd) = (line.End |> snd)
     static member isVertical line = (line.Start |> fst) = (line.End |> fst)
             
-            
+
 type Board = {Positions: Map<int*int,int>} with
     
     static member Empty = {Positions = Map.empty}
-    
-    static member create width height =
-        let generator = seq { 
-            for x in 0 .. width do
-                for y in 0 .. height do
-                    yield (x, y), 0 }
-        { Positions = generator |> Map.ofSeq }
-    
+        
     static member applyLine line board =
         let rec applyPoints points (positions:Map<int*int,int>) =
             match points with
             | [] -> positions
-            | point'::points' -> let value' = positions.[point'] + 1
+            | point'::points' -> let value' = if positions.ContainsKey point' then positions.[point'] + 1 else 1
                                  let positions' = positions |> Map.add point' value'
                                  applyPoints points' positions' 
 
@@ -84,9 +77,7 @@ let allLines = input |> parse
 let horizontalAndVerticalLines = allLines |> List.filter (fun l -> l |> Line.isHorizontal || l |> Line.isVertical)
 
 let solve lines = 
-    let height = lines |> List.map (fun l -> max (l.Start |> snd) (l.End |> snd)) |> List.max
-    let width = lines |> List.map (fun l -> max (l.Start |> fst) (l.End |> fst)) |> List.max
-    let board = Board.create width height
+    let board = Board.Empty
     let finalBoard = board |> Board.applyLines lines
     finalBoard.Positions |> Map.toSeq |> Seq.map snd |> Seq.filter (fun x -> x > 1) |> Seq.length
 
