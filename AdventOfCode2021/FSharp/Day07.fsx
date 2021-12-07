@@ -7,17 +7,20 @@ let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day07.txt")
 
 let input = File.ReadAllLines(file) |> Array.head
 
-let positions = input.Split(',') |> Seq.map int64 |> Seq.toList
+let crap_positions = input.Split(',') |> Seq.map int64 |> Seq.toList
 
-let get_fuel_consumption crap_positions map target_pos = 
-    let fuels_cost pos = (pos - target_pos) |> abs |> map
+let get_fuel_consumption distance_transformation target_pos = 
+    let fuels_cost pos = (pos - target_pos) |> abs |> distance_transformation
     crap_positions |> List.map fuels_cost |> List.sum
 
-let max_pos = positions |> List.max
-let min_pos = positions |> List.min
+let max_pos = crap_positions |> List.max
+let min_pos = crap_positions |> List.min
 let target_positions = [min_pos .. max_pos]
 
-let solve map = (target_positions |> List.map (get_fuel_consumption positions map) |> List.min)
+let solve distance_transformation = 
+    target_positions 
+        |> List.map (get_fuel_consumption distance_transformation) 
+        |> List.min
 
 printfn "Part1: %i" (solve id)
 printfn "Part2: %i" (solve (fun n -> [1L..n] |> List.sum))
