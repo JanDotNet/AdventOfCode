@@ -3,9 +3,9 @@ open System
 
 let file = Path.Combine(__SOURCE_DIRECTORY__, "Data", "Day07.txt")
 
-//let input = "16,1,2,0,4,2,7,1,2,14"
+let input = "16,1,2,0,4,2,7,1,2,14"
 
-let input = File.ReadAllLines(file) |> Array.head
+//let input = File.ReadAllLines(file) |> Array.head
 
 let crap_positions = input.Split(',') |> Seq.map int64 |> Seq.toList
 
@@ -17,10 +17,12 @@ let max_pos = crap_positions |> List.max
 let min_pos = crap_positions |> List.min
 let target_positions = [min_pos .. max_pos]
 
+let x = target_positions |> List.map (fun p -> p, (get_fuel_consumption (fun z -> z * z)) p)
+
 let solve distance_transformation = 
     target_positions 
         |> List.map (get_fuel_consumption distance_transformation) 
         |> List.min
 
-printfn "Part1: %i" (solve id)
+printfn "Part1: %i" (solve (fun x -> x))
 printfn "Part2: %i" (solve (fun n -> [1L..n] |> List.sum))
