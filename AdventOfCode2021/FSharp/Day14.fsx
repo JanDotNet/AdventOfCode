@@ -34,7 +34,6 @@ let parse (input:string list) =
     template, pairInsertions
 
 let template, pairInsertions = input |> parse
-
 let templatePairs = template |> List.pairwise
 let templateMap = pairInsertions |> Map.map (fun k _ -> templatePairs |> List.filter (fun p -> p = k) |> List.length |> int64)
 let templateElementsCount = template 
