@@ -17,29 +17,6 @@ type ExplodeState =
     | RightProcessed of int
     | Completed
 
-let print node =
-    let toPositions node =
-        let rec toPosition' depth col node =
-            match node with
-            | Value (x) -> col+1, [(col+1, depth, x|> string)]
-            | Pair (l, r) -> let col', positions' = (l |> toPosition' (depth+1) col)
-                             let node' = (col'+1,depth, "^")
-                             let col'', positions'' = (r |> toPosition' (depth+1) (col'+1))
-                             col'', positions'@(node'::positions'')
-        toPosition' 0 0 node |> snd
-    let positions = node |> toPositions
-    let maxX = positions |> List.map (fun (x,_,_) -> x) |> List.max
-    let maxY = positions |> List.map (fun (_,x,_) -> x) |> List.max
-    let map = positions |> List.map (fun (x, y, v) -> (x, y), v) |> Map.ofList
-    for y in 0..maxY do
-        printf "%i:" y
-        for x in 1..maxX do
-            printf "%s" (match map.TryFind (x, y) with Some(s) -> s | None -> " ")
-        printfn ""
-        
-
-
-
 let toInt = string >> int
 
 let parse (line:string) =
@@ -59,7 +36,7 @@ let parse (line:string) =
         | _ -> failwith "should not happen"
     stream |> getElements []
 
-let explodeFirst node =
+let explodeOnce node =
     let rec addLeftSide valueToAdd node =
         match node with
         | Value (x) -> Value (x + valueToAdd)
@@ -94,23 +71,19 @@ let explodeFirst node =
 
         
     explode 0 node 
-
-let rec linearize = function
-    | Pair(l, r) -> (l |> linearize) @ (r |> linearize)
-    | Value(x) -> [Value(x)]
  
-let rec splitFirst (node:Node) =
+let rec splitOnce (node:Node) =
     let split x = let l = Value (Math.Floor (float(x)/2.0) |> int)
                   let r = Value (Math.Ceiling (float(x)/2.0) |> int)
                   l, r
-    let rec splitFirst' (hasSplitted:bool) node =    
+    let rec splitOnce' (hasSplitted:bool) node =    
         match node with
-        | Pair(l, r) -> let hasSplitted', left = l |> splitFirst' hasSplitted
-                        let hasSplitted'', right = r |> splitFirst' hasSplitted'
+        | Pair(l, r) -> let hasSplitted', left = l |> splitOnce' hasSplitted
+                        let hasSplitted'', right = r |> splitOnce' hasSplitted'
                         hasSplitted'', Pair (left, right)
         | Value (x) when x > 9 && (not hasSplitted) -> true, Pair (split x)
         | Value (x) -> hasSplitted, Value (x)
-    node |> (splitFirst' false)
+    node |> (splitOnce' false)
 
 let rec calcMagnitude node =
     match node with
@@ -121,13 +94,13 @@ let rec calcMagnitude node =
 
 let rec reduceNode node =
     let rec reduceExplode node =
-        let state, node' = node |> explodeFirst
+        let state, node' = node |> explodeOnce
         match state with
         | NotFound -> node'
         | _ -> reduceExplode node'
 
     let node' = node |> reduceExplode
-    let splitted, node'' = node' |> splitFirst
+    let splitted, node'' = node' |> splitOnce
     if splitted then reduceNode node'' else node''
 
 let rec doHomework nodes =
